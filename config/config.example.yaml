@@ -1,0 +1,113 @@
+---
+# AI News Aggregator Configuration
+
+# Obsidian Integration
+obsidian:
+  vault_path: "/path/to/your/obsidian/vault"  # REQUIRED: Update this path
+  base_folder: "AI-News"
+  tag_max: 8
+  tag_categories:
+    - "topic"      # LLM, computer-vision, robotics, etc.
+    - "company"    # OpenAI, Anthropic, Google, etc.
+    - "type"       # research, product, business, policy
+    - "impact"     # high, medium, low
+    - "specialty"  # reasoning, multimodal, agents, etc.
+
+# News Sources
+sources:
+  rss_feeds:
+    - url: "http://export.arxiv.org/rss/cs.AI"
+      name: "ArXiv AI"
+      weight: 1.3
+    - url: "https://www.artificialintelligence-news.com/feed/"
+      name: "AI News"
+      weight: 1.0
+    - url: "https://venturebeat.com/category/ai/feed/"
+      name: "VentureBeat AI"
+      weight: 1.1
+    - url: "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml"
+      name: "The Verge AI"
+      weight: 1.0
+    - url: "https://www.technologyreview.com/feed/"
+      name: "MIT Tech Review"
+      weight: 1.4
+  
+  websites:
+    - url: "https://openai.com/news"
+      name: "OpenAI Blog"
+      weight: 1.5
+    - url: "https://www.anthropic.com/news"
+      name: "Anthropic News"
+      weight: 1.5
+    - url: "https://ai.googleblog.com/"
+      name: "Google AI Blog"
+      weight: 1.4
+    - url: "https://huggingface.co/papers"
+      name: "Hugging Face Daily Papers"
+      weight: 1.3
+    - url: "https://paperswithcode.com/greatest"
+      name: "Papers With Code Trending"
+      weight: 1.2
+  
+  search_queries:
+    - query: "AI breakthrough OR artificial intelligence breakthrough"
+      days_back: 7
+      min_relevance: 0.7
+    - query: "large language model news OR LLM news"
+      days_back: 7
+      min_relevance: 0.7
+    - query: "AI model release OR new AI model"
+      days_back: 7
+      min_relevance: 0.8
+
+# Scoring Criteria
+scoring:
+  keywords_high_value:
+    - "breakthrough"
+    - "release"
+    - "research"
+    - "model"
+    - "benchmark"
+    - "paper"
+    - "published"
+  
+  keywords_medium_value:
+    - "update"
+    - "announcement"
+    - "feature"
+    - "improvement"
+    - "analysis"
+  
+  weights:
+    source_authority: 0.3
+    recency: 0.2
+    uniqueness: 0.3
+    keyword_match: 0.2
+
+# Selection Parameters
+selection:
+  shortlist_size: 10  # Items shown for manual review
+  deep_dive_count: 3  # Items to research deeply
+  min_score: 40       # Minimum score to be considered
+
+# Deep Dive Settings
+deep_dive:
+  narrative_length: [500, 800]  # Min/max words
+  research_sources: 5           # Number of additional sources to fetch
+  
+# Presentation Settings
+presentation:
+  title_template: "AI News Week {week}"
+  style: "minimal"  # Aligned with Garr Reynolds philosophy
+  slides_per_item: 1
+  
+# Web UI Settings
+web_ui:
+  host: "127.0.0.1"
+  port: 5000
+  auto_open_browser: true
+
+# State Management
+state:
+  archive_after_weeks: 12  # Move old state to archive
+  backup_enabled: true
