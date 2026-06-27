@@ -61,6 +61,10 @@ class Config:
             )
         return Path(path_str).expanduser()
     
+    def get_model(self) -> str:
+        """Get the Claude model ID to use."""
+        return self.get('model', 'claude-sonnet-4-6')
+
     def get_scoring_weights(self) -> Dict[str, float]:
         """Get scoring weights."""
         return self.get('scoring.weights', {})

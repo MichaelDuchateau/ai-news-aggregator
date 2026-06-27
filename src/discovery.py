@@ -19,8 +19,8 @@ class NewsDiscovery:
     def __init__(self, config: Config, state: StateManager):
         self.config = config
         self.state = state
-        self.client = Anthropic()  # Uses ANTHROPIC_API_KEY env var
-        self.search_agent = WebSearchAgent()  # Dedicated search agent
+        self.client = Anthropic()
+        self.search_agent = WebSearchAgent(config)
     
     def discover_all(self) -> List[NewsItem]:
         """Discover news from all configured sources."""
@@ -68,17 +68,17 @@ class NewsDiscovery:
                     pub_date = datetime(*published[:6])
                 else:
                     pub_date = datetime.now()
-                
+
                 # Only include items from last 14 days
                 if (datetime.now() - pub_date).days > 14:
                     continue
-                
+
                 item = NewsItem(
                     url=url,
                     title=entry.get('title', 'No title'),
                     source=feed.name,
                     source_weight=feed.weight,
-                    discovered=datetime.now(),
+                    discovered=pub_date,
                     summary=entry.get('summary', ''),
                     week=self.state.get_current_week()
                 )

@@ -16,7 +16,8 @@ class Researcher:
         self.config = config
         self.discovery = discovery
         self.client = Anthropic()
-        self.search_agent = WebSearchAgent()  # Dedicated search agent
+        self.model = config.get_model()
+        self.search_agent = WebSearchAgent(config)  # Dedicated search agent
     
     def deep_dive(self, item: NewsItem) -> NewsItem:
         """Perform deep dive research on a single item."""
@@ -131,7 +132,7 @@ Write a narrative that:
 Write the narrative now:"""
 
             message = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=self.model,
                 max_tokens=2000,
                 messages=[{
                     "role": "user",
@@ -172,7 +173,7 @@ Example: ai/llm, company/openai, type/research, impact/high, specialty/reasoning
 Refined tags:"""
 
             message = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=self.model,
                 max_tokens=200,
                 messages=[{
                     "role": "user",

@@ -13,6 +13,7 @@ class NewsTagger:
     def __init__(self, config: Config):
         self.config = config
         self.client = Anthropic()
+        self.model = config.get_model()
         self.max_tags = config.get('obsidian.tag_max', 8)
         self.tag_categories = config.get('obsidian.tag_categories', [])
     
@@ -39,7 +40,7 @@ Tags:"""
         
         try:
             message = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=self.model,
                 max_tokens=200,
                 messages=[{
                     "role": "user",
@@ -100,13 +101,24 @@ Tags:"""
         
         return tags[:self.max_tags]
     
-    def tag_all(self, items: List[NewsItem]):
-        """Generate tags for all items in place."""
+    def tag_all(self, items: List[NewsItem], min_score: float = 0.0):
+        """Generate tags for items in place.
+
+        Items at or above min_score get Claude-generated tags; the rest get
+        cheap keyword-based fallback tags to keep API costs down.
+        """
         print("🏷️  Generating tags...")
-        
-        for i, item in enumerate(items, 1):
-            if not item.tags:
+
+        ai_count = 0
+        fallback_count = 0
+        for item in items:
+            if item.tags:
+                continue
+            if item.score >= min_score:
                 item.tags = self.tag_item(item)
-                print(f"  {i}/{len(items)}: {len(item.tags)} tags for '{item.title[:50]}...'")
-        
-        print(f"✅ Tagged {len(items)} items")
+                ai_count += 1
+            else:
+                item.tags = self._generate_fallback_tags(item)
+                fallback_count += 1
+
+        print(f"✅ Tagged {len(items)} items ({ai_count} AI, {fallback_count} keyword fallback)")

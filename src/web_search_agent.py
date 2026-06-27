@@ -11,8 +11,9 @@ from src.search_debugger import get_debugger
 class WebSearchAgent:
     """Handles web search operations with transparent logging."""
 
-    def __init__(self):
+    def __init__(self, config=None):
         self.client = Anthropic()
+        self.model = config.get_model() if config else "claude-sonnet-4-6"
         self.search_count = 0
         self.debugger = get_debugger()
 
@@ -45,7 +46,7 @@ class WebSearchAgent:
         try:
             # Perform the search
             message = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+                model=self.model,
                 max_tokens=4000,
                 tools=[{
                     "type": "web_search_20250305",
@@ -289,69 +290,39 @@ SUMMARY: [brief summary]
         return items
 
     def fetch_url_content(self, url: str) -> str:
-        """
-        Fetch full content from a URL.
+        """Fetch full text content from a URL using requests + BeautifulSoup."""
+        import requests
+        from bs4 import BeautifulSoup
 
-        Args:
-            url: URL to fetch
-
-        Returns:
-            Full text content of the page
-        """
-        print(f"\n  📄 Fetch Agent")
-        print(f"     URL: {url}")
+        print(f"\n  📄 Fetching URL: {url}")
 
         try:
-            # Use web_search tool to fetch URL content
-            # Note: web_fetch doesn't exist, but web_search can access URLs
-            message = self.client.messages.create(
-                model="claude-sonnet-4-20250514",
-                max_tokens=4000,
-                tools=[{
-                    "type": "web_search_20250305",
-                    "name": "web_search"
-                }],
-                messages=[{
-                    "role": "user",
-                    "content": f"""Access this URL and extract its main content: {url}
+            response = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+            response.raise_for_status()
 
-Provide:
-- The article title
-- The main article text/content (full text, not just summary)
-- Key information and details
+            soup = BeautifulSoup(response.content, "html.parser")
 
-Focus on the substantive content, not navigation or ads.
-Extract as much of the actual article content as possible."""
-                }]
-            )
+            # Remove boilerplate elements
+            for tag in soup(["script", "style", "nav", "header", "footer", "aside"]):
+                tag.decompose()
 
-            # Extract content
-            full_text = ""
-            for block in message.content:
-                if hasattr(block, 'text'):
-                    full_text += block.text + "\n"
+            # Prefer <article> body, fall back to <main>, then <body>
+            container = soup.find("article") or soup.find("main") or soup.body
+            text = container.get_text(separator="\n", strip=True) if container else ""
 
-            if full_text.strip():
-                print(f"     ✅ Fetched {len(full_text)} characters")
-            else:
-                print(f"     ⚠️  No content extracted")
+            print(f"     ✅ Fetched {len(text)} characters")
 
-            # Log to debugger
             self.debugger.log_fetch(
                 url=url,
-                content_length=len(full_text),
-                success=bool(full_text.strip())
+                content_length=len(text),
+                success=bool(text)
             )
 
-            return full_text.strip()
+            return text
 
         except Exception as e:
             print(f"     ❌ Fetch failed: {e}")
-            import traceback
-            traceback_str = traceback.format_exc()
-            print(f"     Traceback: {traceback_str}")
 
-            # Log error to debugger
             self.debugger.log_fetch(
                 url=url,
                 content_length=0,

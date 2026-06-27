@@ -67,8 +67,9 @@ class AINewsAggregator:
         print("=" * 50)
         
         items = self.scorer.score_all(items)
-        self.tagger.tag_all(items)
-        
+        min_tag_score = self.config.get('selection.min_score', 40)
+        self.tagger.tag_all(items, min_score=min_tag_score)
+
         # Stage 3: Export All to Obsidian
         print("\n" + "=" * 50)
         print("STAGE 3: EXPORT TO OBSIDIAN")
@@ -164,8 +165,9 @@ class AINewsAggregator:
         
         if items:
             items = self.scorer.score_all(items)
-            self.tagger.tag_all(items)
-            
+            min_tag_score = self.config.get('selection.min_score', 40)
+            self.tagger.tag_all(items, min_score=min_tag_score)
+
             for item in items:
                 self.state.mark_url_processed(item.url, "scanned", item.week)
                 self.state.add_discovered_url(item.url)

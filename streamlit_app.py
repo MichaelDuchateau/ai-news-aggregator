@@ -168,7 +168,8 @@ with tab_discover:
                 items = scorer.score_all(items)
 
                 st.write("Generating tags with Claude…")
-                tagger.tag_all(items)
+                min_tag_score = config.get("selection.min_score", 40)
+                tagger.tag_all(items, min_score=min_tag_score)
 
                 st.write("Exporting to Obsidian…")
                 for item in items:
@@ -193,7 +194,7 @@ with tab_discover:
 
         f1, f2, f3 = st.columns([3, 2, 2])
         search_q = f1.text_input("Search title", placeholder="e.g. GPT, agent…")
-        min_score = f2.slider("Min score", 0.0, 10.0, 0.0, step=0.5)
+        min_score = f2.slider("Min score", 0.0, 100.0, 0.0, step=5.0)
         sort_by = f3.selectbox("Sort by", ["Score ↓", "Score ↑", "Date (newest)", "Date (oldest)"])
 
         filtered = [
