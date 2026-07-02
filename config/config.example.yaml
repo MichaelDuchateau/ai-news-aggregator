@@ -103,12 +103,6 @@ presentation:
   title_template: "AI News Week {week}"
   style: "minimal"  # Aligned with Garr Reynolds philosophy
   slides_per_item: 1
-  
-# Web UI Settings
-web_ui:
-  host: "127.0.0.1"
-  port: 5000
-  auto_open_browser: true
 
 # State Management
 state:

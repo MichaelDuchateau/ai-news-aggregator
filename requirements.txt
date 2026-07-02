@@ -1,6 +1,5 @@
 # Core dependencies
 anthropic>=0.40.0
-flask>=3.0.0
 streamlit>=1.35.0
 pyyaml>=6.0.1
 feedparser>=6.0.10
