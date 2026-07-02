@@ -4,6 +4,7 @@ from typing import List, Dict, Optional
 from datetime import datetime
 from anthropic import Anthropic
 
+from src.config import DEFAULT_MODEL
 from src.models import NewsItem
 from src.search_debugger import get_debugger
 
@@ -13,7 +14,7 @@ class WebSearchAgent:
 
     def __init__(self, config=None):
         self.client = Anthropic()
-        self.model = config.get_model() if config else "claude-sonnet-4-6"
+        self.model = config.get_model() if config else DEFAULT_MODEL
         self.search_count = 0
         self.debugger = get_debugger()
 

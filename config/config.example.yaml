@@ -1,6 +1,9 @@
 ---
 # AI News Aggregator Configuration
 
+# Claude model to use for all AI operations
+model: "claude-sonnet-4-6"
+
 # Obsidian Integration
 obsidian:
   vault_path: "/path/to/your/obsidian/vault"  # REQUIRED: Update this path

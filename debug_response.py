@@ -4,15 +4,22 @@
 import os
 from anthropic import Anthropic
 
+from src.config import Config, DEFAULT_MODEL
+
 # Set API key
 # API key is read from the ANTHROPIC_API_KEY environment variable (see .env)
 
 client = Anthropic()
 
+try:
+    model = Config("config/config.yaml").get_model()
+except FileNotFoundError:
+    model = DEFAULT_MODEL
+
 print("🔍 Making a test search request...\n")
 
 message = client.messages.create(
-    model="claude-sonnet-4-20250514",
+    model=model,
     max_tokens=4000,
     tools=[{
         "type": "web_search_20250305",

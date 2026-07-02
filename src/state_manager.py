@@ -69,9 +69,9 @@ class StateManager:
                     default=str
                 )
     
-    def get_current_week(self) -> str:
+    def get_current_week(self, now: Optional[datetime] = None) -> str:
         """Get current ISO week string (e.g., '2025-W52')."""
-        return datetime.now().strftime("%Y-W%V")
+        return (now or datetime.now()).strftime("%G-W%V")
     
     def init_new_week(self):
         """Initialize state for a new week."""

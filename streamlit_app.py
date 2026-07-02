@@ -344,8 +344,11 @@ with tab_deepdive:
                     for item in st.session_state.deep_dive_items:
                         obsidian.export_deep_dive(item)
                     state.update_stage("complete")
-                    st.session_state.presentation_file = pptx
-                    st.success(f"Presentation saved: `{pptx}`")
+                    if pptx:
+                        st.session_state.presentation_file = pptx
+                        st.success(f"Presentation saved: `{pptx}`")
+                    else:
+                        st.error("Presentation generation failed — see terminal logs.")
 
         # Research results
         if st.session_state.deep_dive_items:

@@ -154,7 +154,8 @@ class AINewsAggregator:
         print("=" * 50)
         print(self.state.get_status_summary())
         print(f"\n📁 Check your Obsidian vault: {self.config.get_obsidian_vault_path()}")
-        print(f"📊 Presentation: {presentation_file}")
+        if presentation_file:
+            print(f"📊 Presentation: {presentation_file}")
     
     def run_scan_only(self):
         """Run discovery and scanning only."""

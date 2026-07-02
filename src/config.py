@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Dict, Any
 from src.models import RSSFeed, Website, SearchQuery
 
+DEFAULT_MODEL = "claude-sonnet-4-6"
+
 
 class Config:
     """Configuration manager."""
@@ -63,7 +65,7 @@ class Config:
     
     def get_model(self) -> str:
         """Get the Claude model ID to use."""
-        return self.get('model', 'claude-sonnet-4-6')
+        return self.get('model', DEFAULT_MODEL)
 
     def get_scoring_weights(self) -> Dict[str, float]:
         """Get scoring weights."""
