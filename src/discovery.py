@@ -3,7 +3,7 @@
 import feedparser
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List
 from anthropic import Anthropic
 
@@ -62,15 +62,15 @@ class NewsDiscovery:
                 if self.state.is_url_processed(url):
                     continue
                 
-                # Extract date
+                # Extract date (published_parsed is a UTC struct_time)
                 published = entry.get('published_parsed')
                 if published:
-                    pub_date = datetime(*published[:6])
+                    pub_date = datetime(*published[:6], tzinfo=timezone.utc)
                 else:
-                    pub_date = datetime.now()
+                    pub_date = datetime.now(timezone.utc)
 
                 # Only include items from last 14 days
-                if (datetime.now() - pub_date).days > 14:
+                if (datetime.now(timezone.utc) - pub_date).days > 14:
                     continue
 
                 item = NewsItem(
@@ -128,7 +128,7 @@ class NewsDiscovery:
                     title=title,
                     source=site.name,
                     source_weight=site.weight,
-                    discovered=datetime.now(),
+                    discovered=datetime.now(timezone.utc),
                     week=self.state.get_current_week()
                 )
                 

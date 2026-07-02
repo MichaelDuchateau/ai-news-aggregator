@@ -1,6 +1,6 @@
 """Scoring module for ranking discovered news items."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 from src.models import NewsItem
 from src.config import Config
@@ -54,7 +54,7 @@ class NewsScorer:
     
     def _score_recency(self, item: NewsItem) -> float:
         """Score based on how recent the item is."""
-        age_days = (datetime.now() - item.discovered).days
+        age_days = (datetime.now(timezone.utc) - item.discovered).days
         
         if age_days == 0:
             return 1.0

@@ -10,32 +10,39 @@ from src.models import WeeklyState, ProcessedURL, NewsItem
 class StateManager:
     """Manages application state and processed URLs."""
     
-    def __init__(self, state_dir: str = "state"):
+    def __init__(self, state_dir: str = "state", prune_after_weeks: int = 12):
         self.state_dir = Path(state_dir)
         self.state_dir.mkdir(parents=True, exist_ok=True)
-        
+
         self.archive_dir = self.state_dir / "archive"
         self.archive_dir.mkdir(exist_ok=True)
-        
+
         self.processed_urls_file = self.state_dir / "processed_urls.json"
         self.weekly_state_file = self.state_dir / "weekly_state.json"
-        
+        self.prune_after_weeks = prune_after_weeks
+
         self.processed_urls = self._load_processed_urls()
         self.weekly_state = self._load_weekly_state()
-    
+
     def _load_processed_urls(self) -> Dict[str, ProcessedURL]:
-        """Load processed URLs from JSON."""
+        """Load processed URLs from JSON, dropping entries older than the cutoff."""
         if not self.processed_urls_file.exists():
             return {}
-        
+
         with open(self.processed_urls_file, 'r') as f:
             data = json.load(f)
-        
+
         # Guard against legacy format: {"processed_urls": [...], "last_updated": "..."}
-        return {
+        urls = {
             url: ProcessedURL(**info)
             for url, info in data.items()
             if isinstance(info, dict)
+        }
+
+        cutoff = datetime.now() - timedelta(weeks=self.prune_after_weeks)
+        return {
+            url: item for url, item in urls.items()
+            if item.first_seen >= cutoff
         }
     
     def _save_processed_urls(self):

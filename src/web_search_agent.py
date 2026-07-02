@@ -1,7 +1,7 @@
 """Web search agent module for transparent search operations."""
 
 from typing import List, Dict, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from anthropic import Anthropic
 
 from src.config import DEFAULT_MODEL
@@ -161,7 +161,7 @@ SUMMARY: [brief summary]
                         title=result.title,
                         source=source_name,
                         source_weight=1.0,
-                        discovered=datetime.now(),
+                        discovered=datetime.now(timezone.utc),
                         summary=getattr(result, 'snippet', '') or getattr(result, 'description', ''),
                         week=""
                     )
@@ -210,7 +210,7 @@ SUMMARY: [brief summary]
                     title=title,
                     source=source_name,
                     source_weight=1.0,
-                    discovered=datetime.now(),
+                    discovered=datetime.now(timezone.utc),
                     summary=summary or "",
                     week=""  # Will be set by caller
                 )
@@ -256,7 +256,7 @@ SUMMARY: [brief summary]
                             title=current_title,
                             source=source_name,
                             source_weight=1.0,
-                            discovered=datetime.now(),
+                            discovered=datetime.now(timezone.utc),
                             week=""
                         )
                         items.append(item)
@@ -283,7 +283,7 @@ SUMMARY: [brief summary]
                             title=title_part,
                             source=source_name,
                             source_weight=1.0,
-                            discovered=datetime.now(),
+                            discovered=datetime.now(timezone.utc),
                             week=""
                         )
                         items.append(item)

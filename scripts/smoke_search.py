@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
-"""Test script for web search agent."""
+"""Manual live-API smoke script for the web search agent.
+
+Not a pytest test — makes real Anthropic API calls. Run directly:
+    python scripts/smoke_search.py
+"""
 
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from src.web_search_agent import WebSearchAgent
 from src.search_debugger import get_debugger
 

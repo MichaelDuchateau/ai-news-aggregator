@@ -32,7 +32,7 @@ st.set_page_config(
 @st.cache_resource
 def load_components():
     config = Config("config/config.yaml")
-    state = StateManager()
+    state = StateManager(prune_after_weeks=config.get('state.archive_after_weeks', 12))
     discovery = NewsDiscovery(config, state)
     scorer = NewsScorer(config)
     tagger = NewsTagger(config)

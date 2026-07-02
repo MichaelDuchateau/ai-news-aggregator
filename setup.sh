@@ -50,7 +50,6 @@ fi
 # Create necessary directories
 mkdir -p state/archive
 mkdir -p output
-mkdir -p templates
 
 echo "✓ Created directory structure"
 echo ""

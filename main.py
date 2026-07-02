@@ -25,7 +25,9 @@ class AINewsAggregator:
         
         try:
             self.config = Config(config_path)
-            self.state = StateManager()
+            self.state = StateManager(
+                prune_after_weeks=self.config.get('state.archive_after_weeks', 12)
+            )
             
             # Initialize components
             self.discovery = NewsDiscovery(self.config, self.state)
